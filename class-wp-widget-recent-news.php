@@ -4,7 +4,7 @@
 
 Plugin Name: Aeris-Widget-Filtered-News-Recent
 GitHub Plugin URI:
-Version: 0.0.2
+Version: 0.0.3
 
 */
 
@@ -41,32 +41,15 @@ class NewsRecent extends WP_Widget {
 			$CatArray[$category->name] = $instance[ $category->name] ? 'true' : 'false';
 		}
 		
-		$tags = get_tags();
 		
-		foreach ( $tags as $tag) {
-			
-			$TagArray[$tag->name] = $instance[$tag->name] ? 'true' : 'false';
-		}
-		
-		
-		
-		$lastposts = get_posts ( array (
-				'numberposts' => $nb_posts,
-				
-				//'category_name'    => 'car',
-				
-				//'post_type' => 'campaign',
-				//'meta_type' => 'DATE',
-				//'orderby' => 'meta_value',
-				//'meta_key' => 'campaign_date_start',
-				'post__not_in' => array (
-						get_the_ID () 
-				) 
-		) );
 		
 		?>
 		
-		
+		<style>
+		aside ul li::before {
+			content: none;
+		}
+		</style>
 		<?php 
 		echo $before_widget;
 		if ($title)
@@ -74,7 +57,8 @@ class NewsRecent extends WP_Widget {
 		else
 			echo $before_title . 'News Récentes' . $after_title;
 		
-
+		
+		
 		$CatStrQuery='';
 
 		// Retrieve the checkbox
@@ -82,33 +66,49 @@ class NewsRecent extends WP_Widget {
 		
 			
 			if( 'on' == $instance[ $category->name]) :  
-				$CatStrQuery != "" && $CatStrQuery .= ",";
+				 $CatStrQuery != "" && $CatStrQuery .= ",";
     			$CatStrQuery .= $category->name;
 				$query = new WP_Query( array( 'category_name' => $CatStrQuery,
 												'posts_per_page'=> $nb_posts
 				) );
-			
-			endif;}
+				
+				
+						endif;}
 			
 			if ( $query->have_posts() ) {
-			//echo "<ul style= 'padding-left:0px;!important'>";
+			
 			while ( $query->have_posts() ) {
 				$query->the_post();
-				//echo '<li> ' . get_the_title() . get_post_permalink($post->ID).'</li>';?>
 				
-				<i class="fa fa-newspaper-o" ></i><a href='<?php echo  get_post_permalink($post->ID);?>'> 
+				$categories = get_the_terms( $post->ID, 'category');
+				
+				?>
+
+		
+ 			<ul style= 'padding-left:0px;!important' >
+				<li style ="border-bottom: 1px solid #eee;">
+				<i class="fa fa-external-link-square" ></i> <a href='<?php echo  get_post_permalink($post->ID);?>'> 
 				<?php echo get_the_title($post->ID); ?></a><br>
-				<span style ="font-size:10px;" ><?php echo 'le '. get_the_date('j F Y'); echo ' à '. get_the_time('H').' h '.get_the_time('i');?></span>
-				
+				<span ><?php echo 'le '. get_the_date('j F Y'); echo ' à '. get_the_time('H').' h '.get_the_time('i');?></span>
+				</li> 
+ 				</ul>  
 				
 				<?php
 			}
-			//echo '</ul>';
+			
 					} else {
 			// no posts found
-			}
-			
-				
+			}?>
+           
+       
+        
+        
+
+        <div class="textwidget">
+            <p><?php echo esc_attr( $text ); ?></p>
+        </div>
+        <?php 
+		/* Restore original Post Data */
 		wp_reset_postdata();
 		
 		echo $after_widget;
@@ -134,11 +134,7 @@ class NewsRecent extends WP_Widget {
 			$instance[$category->name] = $new_instance[ $category->name];
 		}
 		
-		$tags = get_tags();
-		foreach ( $tags as $tag) {
-			 
-			$tag->name; $instance[$tag->name] = $new_instance[ $tag->name];
-		}
+		
 		
 		return $instance;
 	}
@@ -158,8 +154,7 @@ class NewsRecent extends WP_Widget {
 		'orderby' => 'name',
 		'parent'  => 0
 		) );
-		//Récupere la liste des tags 
-		$tags = get_tags();
+	
 		
 		?>
 
@@ -179,27 +174,7 @@ class NewsRecent extends WP_Widget {
 		
 		<?php 	
 		}?>
-		
-		<h3>tag</h3>
-		<?php 
-	foreach ( $tags as $tag) {?>
-		
 
-    <input class="checkbox" type="checkbox" 
-    <?php checked( $instance[ $tag->name], 'on' ); ?> 
-    	  id="<?php echo $this->get_field_id( $tag->name); ?>" 
-    	  name="<?php echo $this->get_field_name($tag->name); ?>" /> 
-    	  
-    <label for="<?php echo $this->get_field_id( $tag->name); ?>"><?php echo $tag->name?></label><br>
-
-		
-		<?php 	
-		}
-		
-		?>
-		
-		
-	
 		
 <p>
 	<label for="<?php echo $this->get_field_id('title'); ?>">
