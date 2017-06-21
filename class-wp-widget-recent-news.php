@@ -2,9 +2,9 @@
 <?php
 /*
 
-Plugin Name: Aeris-Widget-News-Recent
+Plugin Name: Aeris-Widget-Filtered-News-Recent
 GitHub Plugin URI:
-Version: 0.0.1
+Version: 0.0.2
 
 */
 
@@ -138,7 +138,7 @@ class NewsRecent extends WP_Widget {
 				$query->the_post();
 				//echo '<li> ' . get_the_title() . get_post_permalink($post->ID).'</li>';?>
 				<li style ="border-bottom: 1px solid #eee;">
-				<a href='<?php echo  get_post_permalink($post->ID);?>'> 
+				<i class="fa fa-newspaper-o" ></i><a href='<?php echo  get_post_permalink($post->ID);?>'> 
 				<?php echo get_the_title($post->ID); ?></a><br>
 				<span style ="font-size:10px;" ><?php echo 'le '. get_the_date('j F Y'); echo ' à '. get_the_time('H').' h '.get_the_time('i');?></span>
 				</li>
