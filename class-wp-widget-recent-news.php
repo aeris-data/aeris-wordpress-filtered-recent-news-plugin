@@ -66,11 +66,7 @@ class NewsRecent extends WP_Widget {
 		
 		?>
 		
-		<style>
-		aside ul li::before {
-			content: none;
-		}
-		</style>
+		
 		<?php 
 		echo $before_widget;
 		if ($title)
@@ -78,36 +74,7 @@ class NewsRecent extends WP_Widget {
 		else
 			echo $before_title . 'News Récentes' . $after_title;
 		
-		echo "<ul style= 'padding-left:0px;!important' >";
-		
-		
-		
-		$the_query = new WP_Query( 'tag=toto' );
-		
-		if ( $the_query->have_posts() ) {
-			echo '<ul>';
-			while ( $the_query->have_posts() ) {
-				$the_query->the_post();
-				echo '<li> ' . get_the_title() . '</li>';
-			}
-			echo '</ul>';
-		} else {
-			// no posts found
-		}
-		
-		
-		foreach ( $tags as $tag) {
-			
-			if( 'on' == $instance[ $tag->name]) :  echo $tag->name;?>
-           
-        <?php endif; 
-		}
-		
-		
-           
-        
-		
-		$num = 	0;
+
 		$CatStrQuery='';
 
 		// Retrieve the checkbox
@@ -115,60 +82,33 @@ class NewsRecent extends WP_Widget {
 		
 			
 			if( 'on' == $instance[ $category->name]) :  
-				 $CatStrQuery != "" && $CatStrQuery .= ",";
+				$CatStrQuery != "" && $CatStrQuery .= ",";
     			$CatStrQuery .= $category->name;
 				$query = new WP_Query( array( 'category_name' => $CatStrQuery,
 												'posts_per_page'=> $nb_posts
 				) );
-				
-
-				
-				$lastposts = get_posts ( array (
-						
-						'numberposts' 		=> $nb_posts-$num,
-						'category_name'    	=> $category->name,
-						'orderby'			=> 'date',
-				
-			));
+			
 			endif;}
 			
 			if ( $query->have_posts() ) {
-			echo '<ul>';
+			//echo "<ul style= 'padding-left:0px;!important'>";
 			while ( $query->have_posts() ) {
 				$query->the_post();
 				//echo '<li> ' . get_the_title() . get_post_permalink($post->ID).'</li>';?>
-				<li style ="border-bottom: 1px solid #eee;">
+				
 				<i class="fa fa-newspaper-o" ></i><a href='<?php echo  get_post_permalink($post->ID);?>'> 
 				<?php echo get_the_title($post->ID); ?></a><br>
 				<span style ="font-size:10px;" ><?php echo 'le '. get_the_date('j F Y'); echo ' à '. get_the_time('H').' h '.get_the_time('i');?></span>
-				</li>
+				
 				
 				<?php
 			}
-			echo '</ul>';
+			//echo '</ul>';
 					} else {
 			// no posts found
 			}
-				if (($nb_posts-$num != 0))	:
-				foreach ( $lastposts as $post ) { ?>
-					
+			
 				
-		           
-					<?php 
-					
-					$num++;};
-					endif;
-					?>
-           
-       
-        
-        
-
-        <div class="textwidget">
-            <p><?php echo esc_attr( $text ); ?></p>
-        </div>
-        <?php 
-		/* Restore original Post Data */
 		wp_reset_postdata();
 		
 		echo $after_widget;
