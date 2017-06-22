@@ -185,7 +185,7 @@ class NewsRecent extends WP_Widget {
     	  name="<?php echo $this->get_field_name( 'displayMode'); ?>" 
     	 /> 
     	  
-    <label for="<?php echo $this->get_field_id( 'displayMode'); ?>"><?php echo "sidebar" ?></label><br>
+    <label for="<?php echo $this->get_field_id( 'displayMode'); ?>"><?php echo "Liste" ?></label><br>
 
 		
 	<p>
