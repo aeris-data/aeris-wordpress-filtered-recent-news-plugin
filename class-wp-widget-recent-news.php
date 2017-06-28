@@ -97,9 +97,9 @@ class FilteredNews extends WP_Widget {
 	  	
 	  	
 	  else:
-	  echo "<a href='".get_option('home').$url_All."'>Tout voir <span class='icon-angle-right'></span></a>";
+	 
 	  	echo "</section>";
-	  
+	  	echo "<a href='".get_option('home').$url_All."'>Tout voir <span class='icon-angle-right'></span></a>";
 	  endif;
 	 ?>
           
