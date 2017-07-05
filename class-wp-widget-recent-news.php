@@ -218,11 +218,11 @@ class FilteredNews extends WP_Widget {
 	
 	
 	function flitred_news_rewrite_rules() {
-		global $wp_rewrite;
+		
 		add_rewrite_tag('%cat%','([^&]+)');
 		add_rewrite_tag('%title%','([^&]+)');
 	    add_rewrite_rule( 'newrecent/?$', 'index.php?newrecent=true&cat=$matches[1]&title=$matches[2]', 'top' );
-	    $wp_rewrite->flush_rules();
+	    
 	}
 	
 	function flitred_news_query_var( $vars ) {
