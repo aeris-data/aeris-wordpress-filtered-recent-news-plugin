@@ -4,7 +4,7 @@
 
 Plugin Name: Aeris-Widget-Filtered-News
 GitHub Plugin URI:
-Version: 0.0.7
+Version: 0.0.8
 
 */
 
