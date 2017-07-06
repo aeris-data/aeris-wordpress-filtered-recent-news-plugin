@@ -1,10 +1,9 @@
-
 <?php
 /*
 
 Plugin Name: Aeris-Widget-Filtered-News
 GitHub Plugin URI:
-Version: 0.0.8
+Version: 0.0.9
 
 */
 
@@ -241,5 +240,4 @@ class FilteredNews extends WP_Widget {
 	    }
 	
 	    return $template; 
-	}
-	?>
+}
