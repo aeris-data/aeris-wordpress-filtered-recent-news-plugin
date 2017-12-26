@@ -15,8 +15,8 @@ class FilteredNews extends WP_Widget {
 	// Constructeur
 	function FilteredNews() {
 		parent::WP_Widget ( false, $name = 'Aeris-Widget-Filtered-News', array (
-				'name' => 'Aeris-Widget-Filtered-News',
-				'description' => 'Affichage des news recentes par catégorie ' 
+				'name' => 'Aeris-Widget: liste d\'articles par catégories',
+				'description' => 'Affichage des articles par catégorie ' 
 		) );
 	}
 	
@@ -32,8 +32,11 @@ class FilteredNews extends WP_Widget {
 		$offset = $instance ['offset'];
 		
 		$categories = get_categories(array(
-				'orderby' => 'date',
-				'parent'  => 0));
+				'orderby' 		=> 'name',
+				'parent'  		=> '',
+				'hide_empty' 	=> 1,
+				'hierarchical'  => 1,
+			));
 		
 		foreach ( $categories as $category ) {
 			
@@ -137,7 +140,10 @@ class FilteredNews extends WP_Widget {
 		$instance[ 'offset' ] = $new_instance[ 'offset' ];
 		$categories = get_categories(array(
 					 'orderby' => 'name',
-				     'parent'  => 0));
+				     'parent'  		=> '',
+					 'hide_empty' 	=> 1,
+					 'hierarchical'  => 1,
+					));
 		
 		foreach ( $categories as $category ) {
 			
@@ -160,7 +166,11 @@ class FilteredNews extends WP_Widget {
 		//Récupere la liste des catégorie
 		$categories = get_categories(array(
 		'orderby' => 'name',
-		'parent'  => 0));?>
+		'parent'  		=> '',
+		'hide_empty' 	=> 1,
+		'hierarchical'  => 1,
+		));
+		?>
 
 		<p>
 			<label for="<?php echo $this->get_field_id('title'); ?>">
@@ -205,7 +215,7 @@ class FilteredNews extends WP_Widget {
 			
 			<input class="" id="<?php echo $this->get_field_id('displayMode_full'); ?>" name="<?php echo $this->get_field_name('displayMode'); ?>" type="radio" value="full" <?php if($displayMode === 'full'){ echo 'checked="checked"'; } ?> />
 			<label for="<?php echo $this->get_field_id('displayMode_full'); ?>">
-				<?php _e('Article(s) intégré(s) sur 3 colonnes'); ?>
+				<?php _e('Article(s) intégré(s) en "Masonry" (multi-colonnes)'); ?>
 			</label>
 		</p>
 		
