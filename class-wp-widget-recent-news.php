@@ -1,10 +1,12 @@
 <?php
-/*
-
-Plugin Name: Aeris-Widget-Filtered-News
-GitHub Plugin URI:
-Version: 0.0.9
-
+/**
+* Plugin Name: Aeris Widget : Taxonomies list article
+* Plugin URI : https://github.com/sedoo/sedoo-wppl-docmanager
+* Description: Widget permettant de lister des articles en fonction de leur catégorie
+* Author: Samir Boumaza - Pierre VERT
+* Version: 1.0.0
+* GitHub Plugin URI: aeris-data/aeris-wordpress-filtered-recent-news-plugin
+* GitHub Branch:     master
 */
 
 /* Creationd' une classe dérivée de WP_Widget : */
@@ -27,6 +29,7 @@ class FilteredNews extends WP_Widget {
 		$displayMode= $instance[ 'displayMode' ] ? 'true' : 'false';
 		$title = apply_filters ( 'widget_title', $instance ['title'] );
 		$nb_posts = $instance ['nb_posts'];
+		$offset = $instance ['offset'];
 		
 		$categories = get_categories(array(
 				'orderby' => 'date',
@@ -52,16 +55,19 @@ class FilteredNews extends WP_Widget {
 			if( 'on' == $instance[ $category->name]) :  
 				$CatStrQuery != "" && $CatStrQuery .= ",";
     			$CatStrQuery .= $category->name;
-				$the_query = new WP_Query( array( 'category_name' => $CatStrQuery,
-											  'posts_per_page'=> $nb_posts ));
+				$the_query = new WP_Query( array( 	'category_name' => $CatStrQuery,
+											  		'posts_per_page'=> $nb_posts,
+												 	'offset'=> $offset));
 				$instance['catQuery'] = $CatStrQuery;
 			
 			endif;}
 							
-	  	if( 'on' == $instance[ 'displayMode']) : 
+	  	if( 'liste' == $instance[ 'displayMode']) : 
 	  		echo "<ul>";
-	  	else:
-	 		echo "<section role='listNews' class='posts'>";
+	  	elseif( 'embed' == $instance[ 'displayMode']):
+			 echo "<section role='listNews'>";
+		elseif( 'full' == $instance[ 'displayMode']):
+			echo "<section role='listNews' class='posts'>"; // class="posts" is needed by masonry
 	    endif;
 	    
 	    if ( $the_query->have_posts() ) {
@@ -69,7 +75,7 @@ class FilteredNews extends WP_Widget {
 	    	while ( $the_query->have_posts() ) {
 	    		$the_query->the_post();
 					$categories = get_the_terms( $post->ID, 'category');
-	 			if( 'on' == $instance[ 'displayMode']) : ?>
+	 			if( 'liste' == $instance[ 'displayMode']) : ?>
 	 			             
                 	<li>
 					    <a href='<?php echo  get_post_permalink($post->ID);?>'> 
@@ -77,12 +83,20 @@ class FilteredNews extends WP_Widget {
 						<span ><?php echo 'le '. get_the_date('j F Y'); echo ' à '. get_the_time('H').' h '.get_the_time('i');?></span>
 					</li> 
  				
-                <?php else: ?>
-                
-              		<div class="post-container">
-                   		<?php get_template_part( 'template-parts/content', get_post_format() ); ?>
-                   	</div>
-              
+				<?php elseif('embed' == $instance[ 'displayMode']): ?>
+                	<?php 
+					//You might need to create this template in your theme or theme-child, custom it with your own css
+					get_template_part( 'template-parts/content', 'embed-post' );  
+					?>
+
+                <?php elseif('full' == $instance[ 'displayMode']): ?>
+                	<div class="post-container">
+						<?php 
+						// class="post-container" on parent <div> element is needed by masonry
+						//You might need to create this template in your theme or theme-child, custom it with your own css. Default is template-parts/content.php
+						get_template_part( 'template-parts/content', get_post_format() );  
+						?>
+                   	</div>				
                 <?php endif;
             }
             
@@ -90,7 +104,7 @@ class FilteredNews extends WP_Widget {
             // no posts found
             }
             
-      if( 'on' == $instance[ 'displayMode']) : 
+      if( 'liste' == $instance[ 'displayMode']) : 
       echo "<a href='".get_option('home').$url_All."'>Tout voir <span class='icon-angle-right'></span> </a>";
 	  	echo "</ul>";
 	  	
@@ -118,8 +132,9 @@ class FilteredNews extends WP_Widget {
 		$instance = $old_instance;
 		
 		$instance ['title'] = strip_tags ( $new_instance ['title'] );
-		$instance ['nb_posts'] = $new_instance ['nb_posts'];
 		$instance[ 'displayMode' ] = $new_instance[ 'displayMode' ];
+		$instance ['nb_posts'] = $new_instance ['nb_posts'];
+		$instance[ 'offset' ] = $new_instance[ 'offset' ];
 		$categories = get_categories(array(
 					 'orderby' => 'name',
 				     'parent'  => 0));
@@ -137,15 +152,28 @@ class FilteredNews extends WP_Widget {
 		
 		
 		$title = esc_attr ( $instance ['title'] );
+		$displayMode = esc_attr($instance['displayMode']);
 		$nb_posts = esc_attr ( $instance ['nb_posts'] );
 		$nb_posts = isset ( $instance ['nb_posts'] ) ? absint ( $instance ['nb_posts'] ) :5;
+		$offset = esc_attr ( $instance ['offset'] );
 		
 		//Récupere la liste des catégorie
 		$categories = get_categories(array(
 		'orderby' => 'name',
 		'parent'  => 0));?>
 
-		<h3>catégorie</h3>
+		<p>
+			<label for="<?php echo $this->get_field_id('title'); ?>">
+	        	<?php echo 'Titre:'; ?>
+	        <input 
+	        class="widefat"
+			id="<?php echo $this->get_field_id('title'); ?>"
+			name="<?php echo $this->get_field_name('title'); ?>" type="text"
+			value="<?php echo $title; ?>" />
+		   </label>
+		</p>	
+
+		<h3>Catégorie</h3>
 			
 		<?php foreach ( $categories as $category ) {?>
 		
@@ -162,24 +190,32 @@ class FilteredNews extends WP_Widget {
 
 		<h3>Type d'affichage</h3>
 
-	    <input class="checkbox" type="checkbox" 
-	    <?php  checked( $instance[ 'displayMode'], 'on' ); ?> 
-	    	  id="<?php echo $this->get_field_id( 'displayMode'); ?>" 
-	    	  name="<?php echo $this->get_field_name( 'displayMode'); ?>" 
-	    	 /> 
-	    	  
-	    <label for="<?php echo $this->get_field_id( 'displayMode'); ?>"><?php echo "Liste" ?></label><br>
+		<p>
+			<input class="" id="<?php echo $this->get_field_id('displayMode_list'); ?>" name="<?php echo $this->get_field_name('displayMode'); ?>" type="radio" value="liste" <?php if($displayMode === 'liste'){ echo 'checked="checked"'; } ?> />
+			<label for="<?php echo $this->get_field_id('displayMode_list'); ?>">
+				<?php _e('Liste simple'); ?>				
+			</label>
+			<br>
+
+			<input class="" id="<?php echo $this->get_field_id('displayMode_embed'); ?>" name="<?php echo $this->get_field_name('displayMode'); ?>" type="radio" value="embed" <?php if($displayMode === 'embed'){ echo 'checked="checked"'; } ?> />
+			<label for="<?php echo $this->get_field_id('displayMode_embed'); ?>">
+				<?php _e('Article(s) intégré(s) sur une colonne'); ?>
+			</label>
+			<br>
+			
+			<input class="" id="<?php echo $this->get_field_id('displayMode_full'); ?>" name="<?php echo $this->get_field_name('displayMode'); ?>" type="radio" value="full" <?php if($displayMode === 'full'){ echo 'checked="checked"'; } ?> />
+			<label for="<?php echo $this->get_field_id('displayMode_full'); ?>">
+				<?php _e('Article(s) intégré(s) sur 3 colonnes'); ?>
+			</label>
+		</p>
 		
 		<p>
-			<label for="<?php echo $this->get_field_id('title'); ?>">
-	        	<?php echo 'Titre:'; ?>
-	        <input 
-	        class="widefat"
-			id="<?php echo $this->get_field_id('title'); ?>"
-			name="<?php echo $this->get_field_name('title'); ?>" type="text"
-			value="<?php echo $title; ?>" />
-		   </label>
-		</p>
+			<label for="<?php echo $this->get_field_id( 'offset' ); ?>"><?php _e( 'Offset:' ); ?> 
+	        <input style="width: 20%;"
+			id="<?php echo $this->get_field_id( 'offset' ); ?>"
+			name="<?php echo $this->get_field_name( 'offset' ); ?>"
+			type="number" step="1" min="1" value="<?php echo $offset; ?>" /> </label>
+	   </p>
 		
 		<p>
 			<label for="<?php echo $this->get_field_id( 'nb_posts' ); ?>"><?php _e( 'Number of posts to show:' ); ?> 
