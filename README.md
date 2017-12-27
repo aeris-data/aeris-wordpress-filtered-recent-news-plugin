@@ -8,8 +8,9 @@ Widget permettant de lister des articles en fonction des catégories
 
 - Ajout du choix de l'Offset
 - Choix de l’affichage 
-    - Liste (liste simple)
-    - Article(s) intégré(s) sur une colonne
+    - Liste (liste simple ul>li)
+    - Article(s) court(s) intégré(s) sur une colonne affichage réduit à figure / titre / date / tags
+    - Article(s) détaillé()s intégré(s) sur une colonne
     - Article(s) intégré(s) en Masonry
 - Correctifs pour affichage des toutes les catégories (niveau 2)
 - Modifications des descriptions

@@ -69,6 +69,8 @@ class FilteredNews extends WP_Widget {
 	  		echo "<ul>";
 	  	elseif( 'embed' == $instance[ 'displayMode']):
 			 echo "<section role='listNews'>";
+		elseif( 'embedDetails' == $instance[ 'displayMode']):
+			echo "<section role='listNews'>";
 		elseif( 'full' == $instance[ 'displayMode']):
 			echo "<section role='listNews' class='posts'>"; // class="posts" is needed by masonry
 	    endif;
@@ -92,6 +94,12 @@ class FilteredNews extends WP_Widget {
 					get_template_part( 'template-parts/content', 'embed-post' );  
 					?>
 
+				<?php elseif('embedDetails' == $instance[ 'displayMode']): ?>
+                	<?php 
+					//You might need to create this template in your theme or theme-child, custom it with your own css
+					get_template_part( 'template-parts/content', get_post_format() );  
+					?>
+
                 <?php elseif('full' == $instance[ 'displayMode']): ?>
                 	<div class="post-container">
 						<?php 
@@ -113,9 +121,10 @@ class FilteredNews extends WP_Widget {
 	  	
 	  	
 	  else:
-	 
-	  	echo "</section>";
-	  	echo "<a href='".get_option('home').$url_All."'>Tout voir <span class='icon-angle-right'></span></a>";
+		
+		echo "</section>";
+		echo "<a href='".get_option('home').$url_All."'>Tout voir <span class='icon-angle-right'></span></a>";
+	  	
 	  endif;
 	 ?>
           
@@ -209,7 +218,13 @@ class FilteredNews extends WP_Widget {
 
 			<input class="" id="<?php echo $this->get_field_id('displayMode_embed'); ?>" name="<?php echo $this->get_field_name('displayMode'); ?>" type="radio" value="embed" <?php if($displayMode === 'embed'){ echo 'checked="checked"'; } ?> />
 			<label for="<?php echo $this->get_field_id('displayMode_embed'); ?>">
-				<?php _e('Article(s) intégré(s) sur une colonne'); ?>
+				<?php _e('Article(s) court(s) intégré(s) sur une colonne'); ?>
+			</label>
+			<br>
+
+			<input class="" id="<?php echo $this->get_field_id('displayMode_embedDetails'); ?>" name="<?php echo $this->get_field_name('displayMode'); ?>" type="radio" value="embedDetails" <?php if($displayMode === 'embedDetails'){ echo 'checked="checked"'; } ?> />
+			<label for="<?php echo $this->get_field_id('displayMode_embedDetails'); ?>">
+				<?php _e('Article(s) détaillé()s intégré(s) sur une colonne'); ?>
 			</label>
 			<br>
 			
