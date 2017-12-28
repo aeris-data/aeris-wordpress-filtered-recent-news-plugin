@@ -113,16 +113,18 @@ class FilteredNews extends WP_Widget {
             // no posts found
             }
             
-      if( 'liste' == $instance[ 'displayMode']) : 
-      echo "<a href='".get_option('home').$url_All."'>Tout voir <span class='icon-angle-right'></span> </a>";
+      if( ( 'liste' == $instance[ 'displayMode']) && ($nb_posts > 1)) : 
+      echo "<a href='".get_option('home').$url_All."' class=\"Aeris-seeAllButton\">Tout voir <span class='icon-angle-right'></span> </a>";
 	  	echo "</ul>";
 	  	
-	  	
-	  else:
+	  elseif ( $nb_posts > 1 ):
 		
 		echo "</section>";
-		echo "<a href='".get_option('home').$url_All."'>Tout voir <span class='icon-angle-right'></span></a>";
-	  	
+		echo "<a href='".get_option('home').$url_All."' class=\"Aeris-seeAllButton\">Tout voir <span class='icon-angle-right'></span></a>";
+
+	  else:
+		echo "</section>";	
+		
 	  endif;
 	 ?>
           
