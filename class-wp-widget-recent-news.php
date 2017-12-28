@@ -44,10 +44,8 @@ class FilteredNews extends WP_Widget {
 		}
 
 		echo $before_widget;
-		if ($title)
+		if (($title) && ('on' == $instance[ 'displayTitle']))
 			echo $before_title . $title . $after_title;
-		else
-			echo $before_title . 'Résultats filtré' . $after_title;
 		
 		$CatStrQuery='';
 
@@ -144,6 +142,7 @@ class FilteredNews extends WP_Widget {
 		$instance = $old_instance;
 		
 		$instance ['title'] = strip_tags ( $new_instance ['title'] );
+		$instance[ 'displayTitle' ] = $new_instance[ 'displayTitle' ];
 		$instance[ 'displayMode' ] = $new_instance[ 'displayMode' ];
 		$instance ['nb_posts'] = $new_instance ['nb_posts'];
 		$instance[ 'offset' ] = $new_instance[ 'offset' ];
@@ -167,6 +166,7 @@ class FilteredNews extends WP_Widget {
 		
 		
 		$title = esc_attr ( $instance ['title'] );
+		$displayTitle = esc_attr($instance['displayTitle']);
 		$displayMode = esc_attr($instance['displayMode']);
 		$nb_posts = esc_attr ( $instance ['nb_posts'] );
 		$nb_posts = isset ( $instance ['nb_posts'] ) ? absint ( $instance ['nb_posts'] ) :5;
@@ -191,7 +191,16 @@ class FilteredNews extends WP_Widget {
 			value="<?php echo $title; ?>" />
 		   </label>
 		</p>	
-
+		<p>
+			<input class="checkbox" type="checkbox" 
+			<?php  checked( $instance[ 'displayTitle'], 'on' ); ?> 
+				id="<?php echo $this->get_field_id( 'displayTitle'); ?>" 
+				name="<?php echo $this->get_field_name( 'displayTitle'); ?>" 
+				/> 
+				
+			<label for="<?php echo $this->get_field_id( 'displayTitle'); ?>"><?php echo "Afficher le titre" ?></label>
+		</p>
+		<hr>
 		<h3>Catégorie</h3>
 			
 		<?php foreach ( $categories as $category ) {?>
@@ -206,7 +215,7 @@ class FilteredNews extends WP_Widget {
 
   		<?php } ?>
 
-
+		<hr>
 		<h3>Type d'affichage</h3>
 
 		<p>
@@ -233,7 +242,7 @@ class FilteredNews extends WP_Widget {
 				<?php _e('Article(s) intégré(s) en "Masonry" (multi-colonnes)'); ?>
 			</label>
 		</p>
-		
+		<hr>
 		<p>
 			<label for="<?php echo $this->get_field_id( 'offset' ); ?>"><?php _e( 'Offset:' ); ?> 
 	        <input style="width: 20%;"
