@@ -1,0 +1,47 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Aeris Widget : Taxonomies list article\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-04-30 15:34+0000\n"
+"PO-Revision-Date: 2018-04-30 16:37+0000\n"
+"Last-Translator: poleweb <pvert@mel2.obs-mip.fr>\n"
+"Language-Team: English (United States)\n"
+"Language: en_US\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco https://localise.biz/"
+
+#. Name of the plugin
+msgid "Aeris-Widget: liste d'articles par catégories"
+msgstr "Aeris Widget : Taxonomies list article"
+
+#. Author of the plugin
+msgid "Samir Boumaza - Pierre VERT"
+msgstr "Samir Boumaza - Pierre VERT"
+
+#. Description of the plugin
+msgid "Widget permettant de lister des articles en fonction de leur catégorie"
+msgstr "List post using categories filters."
+
+msgid "Tout voir"
+msgstr "See all"
+
+msgid "Afficher le titre"
+msgstr "Show title"
+
+msgid "Toutes les catégories sont sélectionnées par défaut si aucune cochée"
+msgstr "All categories selected by default if nothing checked"
+
+msgid "Liste simple"
+msgstr "Simple list"
+
+msgid "Article(s) court(s) intégré(s) sur une colonne"
+msgstr "Short article(s) embed - 1 column"
+
+msgid "Article(s) détaillé()s intégré(s) sur une colonne"
+msgstr "Detailed article(s) embed - 1 column"
+
+msgid "Article(s) intégré(s) en multi-colonnes (Masonry)"
+msgstr "Detailed article(s) embed - multi columns (Masonry)"
