@@ -4,7 +4,7 @@
 * Plugin URI : https://github.com/sedoo/sedoo-wppl-docmanager
 * Description: Widget permettant de lister des articles en fonction de leur catégorie
 * Author: Samir Boumaza - Pierre VERT
-* Version: 1.0.0
+* Version: 1.1.0
 * GitHub Plugin URI: aeris-data/aeris-wordpress-filtered-recent-news-plugin
 * GitHub Branch:     master
 */
