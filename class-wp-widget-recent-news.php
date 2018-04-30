@@ -1,7 +1,9 @@
 <?php
 /**
-* Plugin Name: Aeris Widget : Taxonomies list article
-* Plugin URI : https://github.com/sedoo/sedoo-wppl-docmanager
+* Plugin Name: Aeris-Widget: liste d'articles par catégories
+* Plugin URI : https://github.com/aeris-data/aeris-wordpress-filtered-recent-news-plugin
+* Text Domain: aeris-wppl-filtered-news
+* Domain Path: /languages
 * Description: Widget permettant de lister des articles en fonction de leur catégorie
 * Author: Samir Boumaza - Pierre VERT
 * Version: 1.1.0
@@ -9,7 +11,7 @@
 * GitHub Branch:     master
 */
 
-/* Creationd' une classe dérivée de WP_Widget : */
+/* Creation d'une classe dérivée de WP_Widget : */
 class FilteredNews extends WP_Widget {
 	
 	// Constructeur
@@ -49,20 +51,29 @@ class FilteredNews extends WP_Widget {
 		
 		$CatStrQuery='';
 
-		// Retrieve the checkbox
-		foreach ( $categories as $category) {
-		
-			
-			if( 'on' == $instance[ $category->name]) :  
-				$CatStrQuery != "" && $CatStrQuery .= ",";
-    			$CatStrQuery .= $category->name;
-				$the_query = new WP_Query( array( 	'category_name' => $CatStrQuery,
-											  		'posts_per_page'=> $nb_posts,
-												 	'offset'=> $offset));
-				$instance['catQuery'] = $CatStrQuery;
-			
-			endif;}
-							
+		if ($categories) {
+			// Retrieve the checkbox
+			$i=0; //count the checked checkbox
+			foreach ( $categories as $category) {			
+
+				if( 'on' == $instance[ $category->slug]) {
+					$CatStrQuery != "" && $CatStrQuery .= ",";
+					$CatStrQuery .= $category->slug;
+					$the_query = new WP_Query( array( 	'category_name' => $CatStrQuery,
+														'posts_per_page'=> $nb_posts,
+														'offset'=> $offset));
+					$instance['catQuery'] = $CatStrQuery;
+					$i++;
+				}
+			}
+		}
+		// If no checkbox, all categories by default
+		if ($i == 0) {
+			$the_query = new WP_Query( array( 	'post_type' => 'post',
+												'posts_per_page'=> $nb_posts,
+												'offset'=> $offset));
+		}  			
+
 	  	if( 'liste' == $instance[ 'displayMode']) : 
 	  		echo "<ul>";
 	  	elseif( 'embed' == $instance[ 'displayMode']):
@@ -74,16 +85,17 @@ class FilteredNews extends WP_Widget {
 	    endif;
 	    
 	    if ( $the_query->have_posts() ) {
-	    	$url_All = "/index.php?newrecent=true&cat=".$CatStrQuery."&title=".$title;
+			$CatStrQueryURL = urlencode($CatStrQuery);
+	    	$url_All = "/?newrecent=true&cat=".$CatStrQueryURL."&title=".$title;
 	    	while ( $the_query->have_posts() ) {
 	    		$the_query->the_post();
-					$categories = get_the_terms( $post->ID, 'category');
+				$categories = get_the_terms( $post->ID, 'category');
 	 			if( 'liste' == $instance[ 'displayMode']) : ?>
 	 			             
                 	<li>
 					    <a href='<?php echo  get_post_permalink($post->ID);?>'> 
 						<?php  echo get_the_title($post->ID); ?></a><br>
-						<span ><?php echo 'le '. get_the_date('j F Y'); echo ' à '. get_the_time('H').' h '.get_the_time('i');?></span>
+						<span ><?php echo get_the_date('Y/m/d'); echo ' - '. get_the_time('H').' h '.get_the_time('i');?></span>
 					</li> 
  				
 				<?php elseif('embed' == $instance[ 'displayMode']): ?>
@@ -114,13 +126,13 @@ class FilteredNews extends WP_Widget {
             }
             
       if( ( 'liste' == $instance[ 'displayMode']) && ($nb_posts > 1)) : 
-      echo "<a href='".get_option('home').$url_All."' class=\"Aeris-seeAllButton\">Tout voir <span class='icon-angle-right'></span> </a>";
+      echo "<a href=\"".get_option('home').$url_All."\" class=\"Aeris-seeAllButton\">".esc_html__('Tout voir') ." <span class='icon-angle-right'></span> </a>";
 	  	echo "</ul>";
 	  	
 	  elseif ( $nb_posts > 1 ):
 		
 		echo "</section>";
-		echo "<a href='".get_option('home').$url_All."' class=\"Aeris-seeAllButton\">Tout voir <span class='icon-angle-right'></span></a>";
+		echo "<a href='".get_option('home').$url_All."' class=\"Aeris-seeAllButton\">".esc_html__('Tout voir') ." <span class='icon-angle-right'></span></a>";
 
 	  else:
 		echo "</section>";	
@@ -157,7 +169,7 @@ class FilteredNews extends WP_Widget {
 		
 		foreach ( $categories as $category ) {
 			
-			$instance[$category->name] = $new_instance[ $category->name];
+			$instance[$category->slug] = $new_instance[ $category->slug];
 		}
 		
 		return $instance;
@@ -185,7 +197,7 @@ class FilteredNews extends WP_Widget {
 
 		<p>
 			<label for="<?php echo $this->get_field_id('title'); ?>">
-	        	<?php echo 'Titre:'; ?>
+	        	<?php esc_html_e('Titre'); ?>
 	        <input 
 	        class="widefat"
 			id="<?php echo $this->get_field_id('title'); ?>"
@@ -200,53 +212,53 @@ class FilteredNews extends WP_Widget {
 				name="<?php echo $this->get_field_name( 'displayTitle'); ?>" 
 				/> 
 				
-			<label for="<?php echo $this->get_field_id( 'displayTitle'); ?>"><?php echo "Afficher le titre" ?></label>
+			<label for="<?php echo $this->get_field_id( 'displayTitle'); ?>"><?php esc_html_e('Afficher le titre'); ?></label>
 		</p>
 		<hr>
 		<h3>Catégorie</h3>
-			
+			<p style="padding:3px 5px;border:1px solid #1F7E9E;border-radius:5px;color:#1F7E9E;font-style:italic;text-align:center"><?php esc_html_e('!! Toutes les catégories sont sélectionnées par défaut si aucune n\'est cochée !!');?></p>
+			<hr>
 		<?php foreach ( $categories as $category ) {?>
-		
 		    <input class="checkbox" type="checkbox" 
-		    <?php  checked( $instance[ $category->name], 'on' ); ?> 
-		    	  id="<?php echo $this->get_field_id( $category->name); ?>" 
-		    	  name="<?php echo $this->get_field_name( $category->name); ?>" 
+			<?php  
+			checked( $instance[ $category->slug], 'on' ); ?> 
+		    	  id="<?php echo $this->get_field_id( $category->slug); ?>" 
+		    	  name="<?php echo $this->get_field_name( $category->slug); ?>" 
 		    	 /> 
-		    	  
-		    <label for="<?php echo $this->get_field_id( $category->name); ?>"><?php echo $category->name ?></label><br>
-
+					     
+		    <label for="<?php echo $this->get_field_id( $category->slug); ?>"><?php echo $category->name ?></label>
+			<hr>
   		<?php } ?>
 
-		<hr>
 		<h3>Type d'affichage</h3>
 
 		<p>
 			<input class="" id="<?php echo $this->get_field_id('displayMode_list'); ?>" name="<?php echo $this->get_field_name('displayMode'); ?>" type="radio" value="liste" <?php if($displayMode === 'liste'){ echo 'checked="checked"'; } ?> />
 			<label for="<?php echo $this->get_field_id('displayMode_list'); ?>">
-				<?php _e('Liste simple'); ?>				
+				<?php esc_html_e('Liste simple'); ?>				
 			</label>
 			<br>
 
 			<input class="" id="<?php echo $this->get_field_id('displayMode_embed'); ?>" name="<?php echo $this->get_field_name('displayMode'); ?>" type="radio" value="embed" <?php if($displayMode === 'embed'){ echo 'checked="checked"'; } ?> />
 			<label for="<?php echo $this->get_field_id('displayMode_embed'); ?>">
-				<?php _e('Article(s) court(s) intégré(s) sur une colonne'); ?>
+				<?php esc_html_e('Article(s) court(s) intégré(s) sur une colonne'); ?>
 			</label>
 			<br>
 
 			<input class="" id="<?php echo $this->get_field_id('displayMode_embedDetails'); ?>" name="<?php echo $this->get_field_name('displayMode'); ?>" type="radio" value="embedDetails" <?php if($displayMode === 'embedDetails'){ echo 'checked="checked"'; } ?> />
 			<label for="<?php echo $this->get_field_id('displayMode_embedDetails'); ?>">
-				<?php _e('Article(s) détaillé()s intégré(s) sur une colonne'); ?>
+				<?php esc_html_e('Article(s) détaillé()s intégré(s) sur une colonne'); ?>
 			</label>
 			<br>
 			
 			<input class="" id="<?php echo $this->get_field_id('displayMode_full'); ?>" name="<?php echo $this->get_field_name('displayMode'); ?>" type="radio" value="full" <?php if($displayMode === 'full'){ echo 'checked="checked"'; } ?> />
 			<label for="<?php echo $this->get_field_id('displayMode_full'); ?>">
-				<?php _e('Article(s) intégré(s) en "Masonry" (multi-colonnes)'); ?>
+				<?php esc_html_e('Article(s) intégré(s) en "Masonry" (multi-colonnes)'); ?>
 			</label>
 		</p>
 		<hr>
 		<p>
-			<label for="<?php echo $this->get_field_id( 'offset' ); ?>"><?php _e( 'Offset:' ); ?> 
+			<label for="<?php echo $this->get_field_id( 'offset' ); ?>"><?php esc_html_e( 'Offset:' ); ?> 
 	        <input style="width: 20%;"
 			id="<?php echo $this->get_field_id( 'offset' ); ?>"
 			name="<?php echo $this->get_field_name( 'offset' ); ?>"
@@ -254,7 +266,7 @@ class FilteredNews extends WP_Widget {
 	   </p>
 		
 		<p>
-			<label for="<?php echo $this->get_field_id( 'nb_posts' ); ?>"><?php _e( 'Number of posts to show:' ); ?> 
+			<label for="<?php echo $this->get_field_id( 'nb_posts' ); ?>"><?php esc_html_e( 'Number of posts to show:' ); ?> 
 	        <input style="width: 20%;"
 			id="<?php echo $this->get_field_id( 'nb_posts' ); ?>"
 			name="<?php echo $this->get_field_name( 'nb_posts' ); ?>"
