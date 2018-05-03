@@ -1,15 +1,29 @@
 <?php
 /**
-* Plugin Name: Aeris-Widget: liste d'articles par catégories
+* Plugin Name: Aeris Widget : Taxonomies list article
 * Plugin URI : https://github.com/aeris-data/aeris-wordpress-filtered-recent-news-plugin
 * Text Domain: aeris-wppl-filtered-news
 * Domain Path: /languages
-* Description: Widget permettant de lister des articles en fonction de leur catégorie
+* Description: List post using categories filters
 * Author: Samir Boumaza - Pierre VERT
 * Version: 1.1.0
 * GitHub Plugin URI: aeris-data/aeris-wordpress-filtered-recent-news-plugin
 * GitHub Branch:     master
 */
+
+/* 
+* LOAD TEXT DOMAIN FOR TRANSLATION
+*/
+
+function aeris_wppl_filtered_news_load_plugin_textdomain() {
+	$domain = 'aeris-wppl-filtered-news';
+	$locale = apply_filters( 'plugin_locale', get_locale(), $domain );
+	// wp-content/languages/plugin-name/plugin-name-fr_FR.mo
+	load_textdomain( $domain, trailingslashit( WP_LANG_DIR ) . $domain . '/' . $domain . '-' . $locale . '.mo' );
+	// wp-content/plugins/plugin-name/languages/plugin-name-fr_FR.mo
+	load_plugin_textdomain( $domain, FALSE, basename( dirname( __FILE__ ) ) . '/languages/' );
+}
+add_action( 'init', 'aeris_wppl_filtered_news_load_plugin_textdomain' );
 
 /* Creation d'une classe dérivée de WP_Widget : */
 class FilteredNews extends WP_Widget {
@@ -17,8 +31,8 @@ class FilteredNews extends WP_Widget {
 	// Constructeur
 	function FilteredNews() {
 		parent::WP_Widget ( false, $name = 'Aeris-Widget-Filtered-News', array (
-				'name' => 'Aeris-Widget: liste d\'articles par catégories',
-				'description' => 'Affichage des articles par catégorie ' 
+				'name' => 'Aeris Widget : Taxonomies list article',
+				'description' => 'List post using categories filters' 
 		) );
 	}
 	
@@ -126,13 +140,13 @@ class FilteredNews extends WP_Widget {
             }
             
       if( ( 'liste' == $instance[ 'displayMode']) && ($nb_posts > 1)) : 
-      echo "<a href=\"".get_option('home').$url_All."\" class=\"Aeris-seeAllButton\">".esc_html__('Tout voir') ." <span class='icon-angle-right'></span> </a>";
+      echo "<a href=\"".get_option('home').$url_All."\" class=\"Aeris-seeAllButton\">".esc_html__('See all', 'aeris-wppl-filtered-news') ." <span class='icon-angle-right'></span> </a>";
 	  	echo "</ul>";
 	  	
 	  elseif ( $nb_posts > 1 ):
 		
 		echo "</section>";
-		echo "<a href='".get_option('home').$url_All."' class=\"Aeris-seeAllButton\">".esc_html__('Tout voir') ." <span class='icon-angle-right'></span></a>";
+		echo "<a href='".get_option('home').$url_All."' class=\"Aeris-seeAllButton\">".esc_html__('See all', 'aeris-wppl-filtered-news') ." <span class='icon-angle-right'></span></a>";
 
 	  else:
 		echo "</section>";	
@@ -197,7 +211,7 @@ class FilteredNews extends WP_Widget {
 
 		<p>
 			<label for="<?php echo $this->get_field_id('title'); ?>">
-	        	<?php esc_html_e('Titre'); ?>
+	        	<?php esc_html_e('Title', 'aeris-wppl-filtered-news'); ?>
 	        <input 
 	        class="widefat"
 			id="<?php echo $this->get_field_id('title'); ?>"
@@ -212,11 +226,11 @@ class FilteredNews extends WP_Widget {
 				name="<?php echo $this->get_field_name( 'displayTitle'); ?>" 
 				/> 
 				
-			<label for="<?php echo $this->get_field_id( 'displayTitle'); ?>"><?php esc_html_e('Afficher le titre'); ?></label>
+			<label for="<?php echo $this->get_field_id( 'displayTitle'); ?>"><?php esc_html_e('Show title', 'aeris-wppl-filtered-news'); ?></label>
 		</p>
 		<hr>
-		<h3>Catégorie</h3>
-			<p style="padding:3px 5px;border:1px solid #1F7E9E;border-radius:5px;color:#1F7E9E;font-style:italic;text-align:center"><?php esc_html_e('!! Toutes les catégories sont sélectionnées par défaut si aucune n\'est cochée !!');?></p>
+		<h3><?php esc_html_e('Categories', 'aeris-wppl-filtered-news'); ?></h3>
+			<p style="padding:3px 5px;border:1px solid #1F7E9E;border-radius:5px;color:#1F7E9E;font-style:italic;text-align:center"><?php esc_html_e('All categories selected by default if nothing checked', 'aeris-wppl-filtered-news');?></p>
 			<hr>
 		<?php foreach ( $categories as $category ) {?>
 		    <input class="checkbox" type="checkbox" 
@@ -230,30 +244,30 @@ class FilteredNews extends WP_Widget {
 			<hr>
   		<?php } ?>
 
-		<h3>Type d'affichage</h3>
+		<h3><?php esc_html_e('Layout', 'aeris-wppl-filtered-news'); ?></h3>
 
 		<p>
 			<input class="" id="<?php echo $this->get_field_id('displayMode_list'); ?>" name="<?php echo $this->get_field_name('displayMode'); ?>" type="radio" value="liste" <?php if($displayMode === 'liste'){ echo 'checked="checked"'; } ?> />
 			<label for="<?php echo $this->get_field_id('displayMode_list'); ?>">
-				<?php esc_html_e('Liste simple'); ?>				
+				<?php esc_html_e('Simple list', 'aeris-wppl-filtered-news'); ?>				
 			</label>
 			<br>
 
 			<input class="" id="<?php echo $this->get_field_id('displayMode_embed'); ?>" name="<?php echo $this->get_field_name('displayMode'); ?>" type="radio" value="embed" <?php if($displayMode === 'embed'){ echo 'checked="checked"'; } ?> />
 			<label for="<?php echo $this->get_field_id('displayMode_embed'); ?>">
-				<?php esc_html_e('Article(s) court(s) intégré(s) sur une colonne'); ?>
+				<?php esc_html_e('Short article(s) embed - 1 column', 'aeris-wppl-filtered-news'); ?>
 			</label>
 			<br>
 
 			<input class="" id="<?php echo $this->get_field_id('displayMode_embedDetails'); ?>" name="<?php echo $this->get_field_name('displayMode'); ?>" type="radio" value="embedDetails" <?php if($displayMode === 'embedDetails'){ echo 'checked="checked"'; } ?> />
 			<label for="<?php echo $this->get_field_id('displayMode_embedDetails'); ?>">
-				<?php esc_html_e('Article(s) détaillé()s intégré(s) sur une colonne'); ?>
+				<?php esc_html_e('Detailed article(s) embed - 1 column', 'aeris-wppl-filtered-news'); ?>
 			</label>
 			<br>
 			
 			<input class="" id="<?php echo $this->get_field_id('displayMode_full'); ?>" name="<?php echo $this->get_field_name('displayMode'); ?>" type="radio" value="full" <?php if($displayMode === 'full'){ echo 'checked="checked"'; } ?> />
 			<label for="<?php echo $this->get_field_id('displayMode_full'); ?>">
-				<?php esc_html_e('Article(s) intégré(s) en "Masonry" (multi-colonnes)'); ?>
+				<?php esc_html_e('Detailed article(s) embed - multi columns (Masonry)', 'aeris-wppl-filtered-news'); ?>
 			</label>
 		</p>
 		<hr>
