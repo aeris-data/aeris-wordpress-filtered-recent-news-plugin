@@ -6,7 +6,7 @@
 * Domain Path: /languages
 * Description: List post using categories filters
 * Author: Samir Boumaza - Pierre VERT
-* Version: 1.1.1
+* Version: 1.1.2
 * GitHub Plugin URI: aeris-data/aeris-wordpress-filtered-recent-news-plugin
 * GitHub Branch:     master
 */
@@ -153,16 +153,13 @@ class FilteredNews extends WP_Widget {
 		
 	  endif;
 	 ?>
-          
-    
-     <div class="textwidget">
-     	<p><?php echo esc_attr( $text ); ?></p>
-     </div>
+
         
 <?php /* Restore original Post Data */
-	 wp_reset_postdata();
+	wp_reset_postdata();
 	
-	echo $after_widget;}
+	echo $after_widget;
+	}
 	
 	////////////////////////////////////////////////////////////
 	
