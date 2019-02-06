@@ -274,7 +274,7 @@ class FilteredNews extends WP_Widget {
 	        <input style="width: 20%;"
 			id="<?php echo $this->get_field_id( 'offset' ); ?>"
 			name="<?php echo $this->get_field_name( 'offset' ); ?>"
-			type="number" step="1" min="1" value="<?php echo $offset; ?>" /> </label>
+			type="number" step="1" min="0" value="<?php echo $offset; ?>" /> </label>
 	   </p>
 		
 		<p>
