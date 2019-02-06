@@ -105,11 +105,12 @@ class FilteredNews extends WP_Widget {
 	    	while ( $the_query->have_posts() ) {
 	    		$the_query->the_post();
 				$categories = get_the_terms( $post->ID, 'category');
-	 			if( 'liste' == $instance[ 'displayMode']) : ?>
-	 			             
+	 			if( 'liste' == $instance[ 'displayMode']) : 
+					 $titleItem=mb_strimwidth(get_the_title($post->ID), 0, 50, '...');
+					 ?>
                 	<li>
 					    <a href='<?php echo  get_post_permalink($post->ID);?>'> 
-						<?php  echo get_the_title($post->ID); ?></a><br>
+						<?php  echo $titleItem; ?></a><br>
 						<small ><?php echo get_the_date('Y/m/d');?></small>
 					</li> 
  				
