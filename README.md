@@ -4,6 +4,12 @@ Wordpress - Aeris widget Taxonomies list article
 Widget permettant de lister des articles en fonction des catégories
 
 ## Release notes
+
+### 1.2.0
+- Correctifs css sur thème AERIS
+- Correctifs d'affichage
+- Encodage / decodage UTF8 du titre pour le bouton "voir tout" 
+
 ### 1.0.0
 
 - Ajout du choix de l'Offset
