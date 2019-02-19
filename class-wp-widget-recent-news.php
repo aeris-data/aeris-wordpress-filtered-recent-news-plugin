@@ -6,7 +6,7 @@
 * Domain Path: /languages
 * Description: List post using categories filters
 * Author: Samir Boumaza - Pierre VERT
-* Version: 1.1.2
+* Version: 1.2.0
 * GitHub Plugin URI: aeris-data/aeris-wordpress-filtered-recent-news-plugin
 * GitHub Branch:     master
 */
@@ -100,16 +100,18 @@ class FilteredNews extends WP_Widget {
 	    
 	    if ( $the_query->have_posts() ) {
 			$CatStrQueryURL = urlencode($CatStrQuery);
-	    	$url_All = "/?newrecent=true&cat=".$CatStrQueryURL."&title=".$title;
+			$titleURL = utf8_encode($title);
+			$url_All = "/?newrecent=true&cat=".$CatStrQueryURL."&title=".$titleURL;
 	    	while ( $the_query->have_posts() ) {
 	    		$the_query->the_post();
 				$categories = get_the_terms( $post->ID, 'category');
-	 			if( 'liste' == $instance[ 'displayMode']) : ?>
-	 			             
+	 			if( 'liste' == $instance[ 'displayMode']) : 
+					 $titleItem=mb_strimwidth(get_the_title($post->ID), 0, 50, '...');
+					 ?>
                 	<li>
 					    <a href='<?php echo  get_post_permalink($post->ID);?>'> 
-						<?php  echo get_the_title($post->ID); ?></a><br>
-						<span ><?php echo get_the_date('Y/m/d'); echo ' - '. get_the_time('H').' h '.get_the_time('i');?></span>
+						<?php  echo $titleItem; ?></a><br>
+						<small ><?php echo get_the_date('Y/m/d');?></small>
 					</li> 
  				
 				<?php elseif('embed' == $instance[ 'displayMode']): ?>
@@ -273,7 +275,7 @@ class FilteredNews extends WP_Widget {
 	        <input style="width: 20%;"
 			id="<?php echo $this->get_field_id( 'offset' ); ?>"
 			name="<?php echo $this->get_field_name( 'offset' ); ?>"
-			type="number" step="1" min="1" value="<?php echo $offset; ?>" /> </label>
+			type="number" step="1" min="0" value="<?php echo $offset; ?>" /> </label>
 	   </p>
 		
 		<p>

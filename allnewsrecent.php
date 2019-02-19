@@ -9,6 +9,7 @@
 
 get_header(); 
 $GETcategories = urldecode ($_GET['cat']);
+$GETtitle = utf8_decode ($_GET['title']);
 ?>
 <?php
 if ($_GET['title'] !== "") {
@@ -19,7 +20,7 @@ if ($_GET['title'] !== "") {
 		<?php //if (function_exists('the_breadcrumb')) the_breadcrumb(); ?>
 		<span class="current">&nbsp</span>
 		<h1 rel="bookmark">
-			 <?php echo"" .$_GET['title'];?> &nbsp;
+			 <?php echo"" .$GETtitle;?> &nbsp;
 		</h1>
 	</div>
 </div>
