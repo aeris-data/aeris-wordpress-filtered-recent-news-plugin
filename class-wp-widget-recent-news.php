@@ -6,7 +6,7 @@
 * Domain Path: /languages
 * Description: List post using categories filters
 * Author: Samir Boumaza - Pierre VERT
-* Version: 1.2.0
+* Version: 1.2.1
 * GitHub Plugin URI: aeris-data/aeris-wordpress-filtered-recent-news-plugin
 * GitHub Branch:     master
 */
