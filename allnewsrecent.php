@@ -37,7 +37,7 @@ if ($_GET['title'] !== "") {
 			
 			global $post;
 			$argsListPost = array(
-				'posts_per_page'   => -1,
+				'posts_per_page'   => 9,
 				'offset'           => 0,
 				'category'         => '',
 				'category_name'    => ''.$GETcategories.'',
