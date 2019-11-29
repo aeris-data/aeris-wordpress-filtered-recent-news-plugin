@@ -36,11 +36,15 @@ if ($_GET['title'] !== "") {
 			<?php
 			
 			global $post;
+			if (function_exists('pll_current_language')) {
+				$lang = pll_current_language();
+			}
 			$argsListPost = array(
 				'posts_per_page'   => 9,
 				'offset'           => 0,
 				'category'         => '',
 				'category_name'    => ''.$GETcategories.'',
+				'lang'			   => $lang,
 				'orderby'          => 'date',
 				'order'            => 'DESC',
 				'include'          => '',
