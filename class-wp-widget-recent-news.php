@@ -6,7 +6,7 @@
 * Domain Path: /languages
 * Description: List post using categories filters
 * Author: Samir Boumaza - Pierre VERT
-* Version: 1.2.1
+* Version: 1.2.2
 * GitHub Plugin URI: aeris-data/aeris-wordpress-filtered-recent-news-plugin
 * GitHub Branch:     master
 */
@@ -101,7 +101,15 @@ class FilteredNews extends WP_Widget {
 	    if ( $the_query->have_posts() ) {
 			$CatStrQueryURL = urlencode($CatStrQuery);
 			$titleURL = utf8_encode($title);
-			$url_All = "/?newrecent=true&cat=".$CatStrQueryURL."&title=".$titleURL;
+			if (function_exists('pll_current_language')) {
+				$lang = pll_current_language();
+				$url_All = "/".pll_current_language()."/?newrecent=true&cat=".$CatStrQueryURL."&title=".$titleURL;
+				
+			} else {
+				$url_All = "/?newrecent=true&cat=".$CatStrQueryURL."&title=".$titleURL;
+			}
+			
+			
 	    	while ( $the_query->have_posts() ) {
 	    		$the_query->the_post();
 				$categories = get_the_terms( $post->ID, 'category');
