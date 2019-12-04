@@ -39,31 +39,35 @@ if ($_GET['title'] !== "") {
 			if (function_exists('pll_current_language')) {
 				$lang = pll_current_language();
 			}
+			// Hook for pagination on wp_query
+			$paged = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
 			$argsListPost = array(
-				'posts_per_page'   => 9,
+				'posts_per_page'   => get_option('posts_per_page'),
 				'offset'           => 0,
 				'category'         => '',
 				'category_name'    => ''.$GETcategories.'',
 				'lang'			   => $lang,
+				'paged'          	=> $paged,
 				'orderby'          => 'date',
 				'order'            => 'DESC',
-				'include'          => '',
-				'exclude'          => '',
-				'meta_key'         => '',
-				'meta_value'       => '',
 				'post_type'        => 'post',
-				'post_mime_type'   => '',
-				'post_parent'      => '',
-				'author'		   => '',
-				'author_name'	   => '',
 				'post_status'      => 'publish',
 				'suppress_filters' => true 
 			);
-
-			$postsList = get_posts ($argsListPost);
 			
-			foreach ($postsList as $post) :
-				setup_postdata( $post );
+			$the_query = new WP_Query( $argsListPost );
+
+			// Pagination fix
+			// $temp_query = $wp_query;
+			// $wp_query   = NULL;
+			// $wp_query   = $the_query;
+
+			// $postsList = get_posts ($argsListPost);
+			
+			// foreach ($postsList as $post) :
+			// 	setup_postdata( $post );
+			while ( $the_query->have_posts() ) :
+				$the_query->the_post();
 				?>
 				<div class="post-container">
 				<?php
@@ -71,17 +75,26 @@ if ($_GET['title'] !== "") {
 				?>
 				</div>
 				<?php
-			endforeach;
+			endwhile;
 			
 			?>
 			
 		</section>
 		<?php 
+		// $test = the_post_navigation();
+		// var_dump($test); 
 		the_posts_navigation();
+		
+		wp_reset_postdata();
 		?>
 		<?php 
+			// previous_posts_link( 'Older Posts' );
+			// next_posts_link( 'Newer Posts', $the_query->max_num_pages );
+
+			// // Reset main query object
+			// $wp_query = NULL;
+			// $wp_query = $temp_query;
 			
-			wp_reset_postdata();
 		?>
 	</main><!-- #main -->
 </div><!-- #content-area -->
