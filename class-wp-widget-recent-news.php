@@ -6,7 +6,7 @@
 * Domain Path: /languages
 * Description: List post using categories filters
 * Author: Samir Boumaza - Pierre VERT
-* Version: 1.2.2
+* Version: 1.3.0
 * GitHub Plugin URI: aeris-data/aeris-wordpress-filtered-recent-news-plugin
 * GitHub Branch:     master
 */
@@ -101,14 +101,18 @@ class FilteredNews extends WP_Widget {
 	    if ( $the_query->have_posts() ) {
 			$CatStrQueryURL = urlencode($CatStrQuery);
 			$titleURL = utf8_encode($title);
-			if (function_exists('pll_current_language')) {
-				$lang = pll_current_language();
-				$url_All = "/".pll_current_language()."/?newrecent=true&cat=".$CatStrQueryURL."&title=".$titleURL;
-				
-			} else {
-				$url_All = "/?newrecent=true&cat=".$CatStrQueryURL."&title=".$titleURL;
-			}
 			
+			if (!empty($CatStrQuery)) {
+					$url_All = get_term_link($CatStrQuery, 'category');
+				}else {
+					$url_All = get_permalink( get_option( 'page_for_posts' ) );
+				}
+			
+			// if (function_exists('pll_current_language')) {
+			// 	$lang = pll_current_language();
+			// 	$url_All = "/".pll_current_language()."/?newrecent=true&cat=".$CatStrQueryURL."&title=".$titleURL;
+				
+			// }	
 			
 	    	while ( $the_query->have_posts() ) {
 	    		$the_query->the_post();
@@ -150,13 +154,14 @@ class FilteredNews extends WP_Widget {
             }
             
       if( ( 'liste' == $instance[ 'displayMode']) && ($nb_posts > 1)) : 
-      echo "<a href=\"".get_option('home').$url_All."\" class=\"Aeris-seeAllButton\">".esc_html__('See all', 'aeris-wppl-filtered-news') ." <span class='icon-angle-right'></span> </a>";
+	//   echo "<a href=\"".get_option('home').$url_All."\" class=\"Aeris-seeAllButton\">".esc_html__('See all', 'aeris-wppl-filtered-news') ." <span class='icon-angle-right'></span> </a>";
+			echo "<a href=\"".$url_All."\" class=\"Aeris-seeAllButton\">".esc_html__('See all', 'aeris-wppl-filtered-news') ." <span class='icon-angle-right'></span> </a>";
 	  	echo "</ul>";
 	  	
 	  elseif ( $nb_posts > 1 ):
 		
 		echo "</section>";
-		echo "<a href='".get_option('home').$url_All."' class=\"Aeris-seeAllButton\">".esc_html__('See all', 'aeris-wppl-filtered-news') ." <span class='icon-angle-right'></span></a>";
+		echo "<a href=\"".$url_All."\" class=\"Aeris-seeAllButton\">".esc_html__('See all', 'aeris-wppl-filtered-news') ." <span class='icon-angle-right'></span></a>";
 
 	  else:
 		echo "</section>";	
@@ -206,10 +211,14 @@ class FilteredNews extends WP_Widget {
 		$nb_posts = esc_attr ( $instance ['nb_posts'] );
 		$nb_posts = isset ( $instance ['nb_posts'] ) ? absint ( $instance ['nb_posts'] ) :5;
 		$offset = esc_attr ( $instance ['offset'] );
-		
+		if (function_exists('pll_current_language')) {
+			$lang = pll_current_language();
+		}
+
 		//Récupere la liste des catégorie
 		$categories = get_categories(array(
-		'orderby' => 'name',
+		'orderby' 		=> 'name',
+		'lang'			=> $lang,
 		'parent'  		=> '',
 		'hide_empty' 	=> 1,
 		'hierarchical'  => 1,
